@@ -1,7 +1,57 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { CssBaseline, AppBar, Toolbar, Typography, Container } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Snackbar, Alert } from '@mui/material';
+import { JSONTree } from 'react-json-tree';
 import './styles.css';
+import { loadJsonContent, transformData, defaultResult } from './loader';
+
+
+const transformToMetaTheme = userTheme => {
+    return {
+        base00: userTheme["terminal.background"],
+        base01: userTheme["terminal.ansiBrightBlack"],
+        base02: userTheme["terminal.ansiBlack"],
+        base03: userTheme["terminal.foreground"],
+        base04: userTheme["terminal.ansiWhite"],
+        base05: userTheme["terminal.foreground"],
+        base06: userTheme["terminal.ansiBrightWhite"],
+        base07: userTheme["terminal.background"],
+        base08: userTheme["terminal.ansiRed"],
+        base09: userTheme["terminal.ansiBrightRed"],
+        base0A: userTheme["terminal.ansiYellow"],
+        base0B: userTheme["terminal.ansiGreen"],
+        base0C: userTheme["terminal.ansiCyan"],
+        base0D: userTheme["terminal.ansiBlue"],
+        base0E: userTheme["terminal.ansiMagenta"],
+        base0F: userTheme["terminal.ansiBrightYellow"]
+    };
+}
+
+const metaTheme = transformToMetaTheme({
+    "terminal.background": "#FFFFFF",
+    "terminal.foreground": "#4D4D4B",
+    "terminalCursor.background": "#4E4D4C",
+    "terminalCursor.foreground": "#4D4E4C",
+    "terminal.ansiBlack": "#FFFFFF",
+    "terminal.ansiBlue": "#4270AE",
+    "terminal.ansiBrightBlack": "#8F908C",
+    "terminal.ansiBrightBlue": "#4271AF",
+    "terminal.ansiBrightCyan": "#3E9A9F",
+    "terminal.ansiBrightGreen": "#718C01",
+    "terminal.ansiBrightMagenta": "#8958A8",
+    "terminal.ansiBrightRed": "#C82828",
+    "terminal.ansiBrightWhite": "#1D1F20",
+    "terminal.ansiBrightYellow": "#EAB701",
+    "terminal.ansiCyan": "#3F999F",
+    "terminal.ansiGreen": "#728C00",
+    "terminal.ansiMagenta": "#8959A9",
+    "terminal.ansiRed": "#C8282A",
+    "terminal.ansiWhite": "#4D4D4D",
+    "terminal.ansiYellow": "#EAB6FF"
+});
+
 
 const App = () => {
     const [droppedFile, setDroppedFile] = useState(null);
