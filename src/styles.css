@@ -2,7 +2,6 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    text-align: center;
 }
 
 .container {
@@ -14,7 +13,6 @@ body {
 .cell {
     box-sizing: border-box;
     padding: 10px;
-    border: 1px solid #ccc;
 }
 
 .cell-half {
