@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.cell {
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.cell-half {
+    flex: 1 1 50%;
+    max-width: 50%;
+}
+
+.cell-full {
+    flex: 1 1 100%;
+    max-width: 100%;
+}
