@@ -6,7 +6,7 @@ import { Snackbar, Alert } from '@mui/material';
 import { JSONTree } from 'react-json-tree';
 import './styles.css';
 import { loadJsonContent, transformData, defaultResult } from './loader';
-
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const transformToMetaTheme = userTheme => {
     return {
@@ -52,6 +52,73 @@ const metaTheme = transformToMetaTheme({
     "terminal.ansiYellow": "#EAB6FF"
 });
 
+const MetadataComponent = ({ data, metaTheme }) => (
+    <div className="component component-half">
+        <Typography variant="body1">Pore Log Viewer Utility</Typography>
+        {data.meta && Object.keys(data.meta).length > 0 ? (
+            <>
+                <Typography variant="h6" style={{ marginTop: '10px' }}>Metadata</Typography>
+                <JSONTree data={data.meta} hideRoot={true} theme={metaTheme} />
+            </>
+        ) : (
+            <Typography variant="body2" color="textSecondary" style={{ marginTop: '10px' }}>
+                This utility allows you to visualize and analyze log files.
+                Drag and drop a JSON file into the drop area or click the drop area to select a file.
+            </Typography>
+        )}
+    </div>
+);
+
+const FileDropComponent = ({ droppedFile, fileInputRef, handleDrop, handleDragOver, handleFileDropClick, handleFileInputChange }) => (
+    <div
+        className="component component-half filedrop-component"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onClick={handleFileDropClick}
+        style={{
+            border: '2px dashed #ccc',
+            padding: '20px',
+            textAlign: 'center',
+            cursor: 'pointer',
+        }}
+    >
+        <i className="bi bi-cloud-upload icon"></i>
+        <Typography variant="body1">
+            {droppedFile ? `Dropped File: ${droppedFile}` : 'Drag and drop a file here or click to select'}
+        </Typography>
+        <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileInputChange}
+        />
+    </div>
+);
+
+const TableComponent = ({ data }) => (
+    <div className="component component-full">
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        {data?.tableHeader.map((value, index) => (
+                            <TableCell key={index}>{value}</TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {data?.tableData.map((row, index) => (
+                        <TableRow key={index}>
+                            {row?.map((value, index) => (
+                                <TableCell key={index}>{JSON.stringify(value)}</TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    </div>
+);
 
 const App = () => {
     const [droppedFile, setDroppedFile] = useState(null);
@@ -70,7 +137,7 @@ const App = () => {
                 const t_data = transformData(inputData);
                 setData(t_data);
             } catch (error) {
-                setError(error.message); // Set error message for Snackbar
+                setError(error.message);
             }
         }
     };
@@ -100,7 +167,7 @@ const App = () => {
     };
 
     const handleCloseSnackbar = () => {
-        setError(null); // Clear error when Snackbar is closed
+        setError(null);
     };
 
     return (
@@ -108,63 +175,26 @@ const App = () => {
             <CssBaseline />
             <AppBar position="static">
                 <Toolbar>
-                    <Typography variant="h6">Pore Log Viewer</Typography>
+                    <Typography
+                        variant="h6"
+                        style={{ fontFamily: 'monospace', fontWeight: 'bold', textTransform: 'uppercase', fontStyle: 'italic', fontSize: '2rem' }}
+                    >
+                        LAKE ENK
+                    </Typography>
                 </Toolbar>
             </AppBar>
             <Container>
                 <div className="container">
-                    <div className="cell cell-half">
-                        <Typography variant="body1">Meta Data</Typography>
-                        <JSONTree data={data.meta} hideRoot={true} theme={metaTheme} />
-                    </div>
-                    <div
-                        className="cell cell-half filedrop-cell"
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOver}
-                        onClick={handleFileDropClick}
-                        style={{
-                            border: '2px dashed #ccc',
-                            padding: '20px',
-                            textAlign: 'center',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        <Typography variant="body1">
-                            {droppedFile ? `Dropped File: ${droppedFile}` : 'Drag and drop a file here or click to select'}
-                        </Typography>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                            onChange={handleFileInputChange}
-                        />
-                    </div>
-                    <div className="cell cell-full">
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        {
-                                            data?.tableHeader.map((value, index) => (
-                                                <TableCell key={index}>{value}</TableCell>
-                                            ))
-                                        }
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {data?.tableData.map((row, index) => (
-                                        <TableRow key={index}>
-                                            {
-                                                row?.map((value, index) => (
-                                                    <TableCell key={index}>{JSON.stringify(value)}</TableCell>
-                                                ))
-                                            }
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </div>
+                    <MetadataComponent data={data} metaTheme={metaTheme} />
+                    <FileDropComponent
+                        droppedFile={droppedFile}
+                        fileInputRef={fileInputRef}
+                        handleDrop={handleDrop}
+                        handleDragOver={handleDragOver}
+                        handleFileDropClick={handleFileDropClick}
+                        handleFileInputChange={handleFileInputChange}
+                    />
+                    <TableComponent data={data} />
                 </div>
             </Container>
             <Snackbar
