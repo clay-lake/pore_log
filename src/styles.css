@@ -26,3 +26,20 @@ body {
     flex: 1 1 100%;
     max-width: 100%;
 }
+
+.filedrop-cell {
+    padding: 20px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .cell-half,
+    .cell-full {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
