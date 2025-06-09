@@ -34,14 +34,20 @@ const transformData = (inputData) => {
 
     // Extract table header from inputData.Data
     const headerSet = new Set();
+    headerSet.add('Index'); // Add 'Index' as the first column
     inputData.Data.forEach(row => {
         Object.keys(row).forEach(key => headerSet.add(key));
     });
     result.tableHeader = Array.from(headerSet);
 
     // Populate table data
-    result.tableData = inputData.Data.map(row => {
-        return result.tableHeader.map(header => row[header] || null);
+    result.tableData = inputData.Data.map((row, index) => {
+        return result.tableHeader.map(header => {
+            if (header === 'Index') {
+                return index + 1; // Add 1-based index
+            }
+            return row[header] || null;
+        });
     });
 
     return result;
