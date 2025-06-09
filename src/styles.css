@@ -26,8 +26,8 @@ body {
 }
 
 .filedrop-component {
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    aspect-ratio: 2 / 1;
     border: 2px dashed #ccc;
     padding: 20px;
     text-align: center;
@@ -39,12 +39,8 @@ body {
 }
 
 .filedrop-component .icon {
-    font-size: 2rem;
+    font-size: 4rem;
     color: #ccc;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 @media (max-width: 768px) {
