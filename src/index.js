@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { Snackbar, Alert } from '@mui/material';
 import { JSONTree } from 'react-json-tree';
 import './styles.css';
-import { loadJsonContent, transformData, defaultResult } from './loader';
+import { loadJsonContent, transformData, defaultResult, getCSVContent } from './loader';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const transformToMetaTheme = userTheme => {
@@ -28,6 +28,16 @@ const transformToMetaTheme = userTheme => {
         base0F: userTheme["terminal.ansiBrightYellow"]
     };
 }
+
+const downloadTextFile = (filename, content) => {
+    const element = document.createElement('a');
+    const file = new Blob([content], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = filename;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+};
 
 const metaTheme = transformToMetaTheme({
     "terminal.background": "#FFFFFF",
@@ -52,18 +62,18 @@ const metaTheme = transformToMetaTheme({
     "terminal.ansiYellow": "#EAB6FF"
 });
 
-const MetadataComponent = ({ data, metaTheme }) => (
+const MetaComponent = ({ data, metaTheme, droppedFile }) => (
     <div className="component component-half">
-        <Typography variant="body1">Pore Log Viewer Utility</Typography>
+        <Typography variant="h5">Pore Log Viewer</Typography>
         {data.meta && Object.keys(data.meta).length > 0 ? (
             <>
                 <Typography variant="h6" style={{ marginTop: '10px' }}>Metadata</Typography>
                 <JSONTree data={data.meta} hideRoot={true} theme={metaTheme} />
+
             </>
         ) : (
             <Typography variant="body2" color="textSecondary" style={{ marginTop: '10px' }}>
-                This utility allows you to visualize and analyze log files.
-                Drag and drop a JSON file into the drop area or click the drop area to select a file.
+                This utility allows you to view JSON data from a Pore Log file. Select a file a file to begin.
             </Typography>
         )}
     </div>
@@ -92,22 +102,36 @@ const FileDropComponent = ({ droppedFile, fileInputRef, handleDrop, handleDragOv
             style={{ display: 'none' }}
             onChange={handleFileInputChange}
         />
-    </div>
+    </div >
 );
 
-const TableComponent = ({ data }) => (
+const TableComponent = ({ data, droppedFile }) => (
     <div className="component component-full">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="body2" color="textSecondary">
+                {data.tableData.length > 0 ? `Rows: ${data.tableData.length}` : ""}
+            </Typography>
+            {droppedFile && data.tableData.length ? (
+                <Typography variant="body2" color="primary" component="a" href="#"
+                    onClick={() => downloadTextFile('table-content.json', getCSVContent(data))}
+                    style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+                >
+                    <i className="bi bi-download" style={{ marginRight: '8px' }}></i>
+                    {droppedFile.replace(/\.[^/.]+$/, ".csv")}
+                </Typography>
+            ) : null}
+        </div>
         <TableContainer component={Paper}>
             <Table>
                 <TableHead>
                     <TableRow>
-                        {data?.tableHeader.map((value, index) => (
+                        {data.tableHeader.map((value, index) => (
                             <TableCell key={index}>{value}</TableCell>
                         ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data?.tableData.map((row, index) => (
+                    {data.tableData.map((row, index) => (
                         <TableRow key={index}>
                             {row?.map((value, index) => (
                                 <TableCell key={index}>{JSON.stringify(value)}</TableCell>
@@ -185,7 +209,7 @@ const App = () => {
             </AppBar>
             <Container>
                 <div className="container">
-                    <MetadataComponent data={data} metaTheme={metaTheme} />
+                    <MetaComponent data={data} metaTheme={metaTheme} droppedFile={droppedFile} />
                     <FileDropComponent
                         droppedFile={droppedFile}
                         fileInputRef={fileInputRef}
@@ -194,7 +218,7 @@ const App = () => {
                         handleFileDropClick={handleFileDropClick}
                         handleFileInputChange={handleFileInputChange}
                     />
-                    <TableComponent data={data} />
+                    <TableComponent data={data} droppedFile={droppedFile} />
                 </div>
             </Container>
             <Snackbar
