@@ -85,6 +85,7 @@ describe('transformData', () => {
         };
         const result = transformData(inputData);
         expect(result.tableHeader).toEqual([
+            'Index',
             'SerialNumber',
             'DateTime',
             'MillimeterWaterPressure',
@@ -93,8 +94,8 @@ describe('transformData', () => {
             'IsDataValid',
         ]);
         expect(result.tableData).toEqual([
-            [12345, '2025-01-01T00:00:00', 10000, 50, 100, true],
-            [12345, '2025-01-01T00:00:01', 10000, 50, 100, true],
+            [1, 12345, '2025-01-01T00:00:00', 10000, 50, 100, true],
+            [2, 12345, '2025-01-01T00:00:01', 10000, 50, 100, true],
         ]);
     });
 });
