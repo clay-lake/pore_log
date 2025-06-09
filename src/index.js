@@ -113,44 +113,47 @@ const FileDropComponent = ({ droppedFile, fileInputRef, handleDrop, handleDragOv
     </div >
 );
 
-const TableComponent = ({ data, droppedFile }) => (
-    <div className="component component-full">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="body2" color="textSecondary">
-                {data.tableData.length > 0 ? `Rows: ${data.tableData.length}` : ""}
-            </Typography>
-            {droppedFile && data.tableData.length ? (
-                <Typography variant="body2" color="primary" component="a" href="#"
-                    onClick={() => downloadTextFile('table-content.json', getCSVContent(data))}
-                    style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
-                >
-                    <i className="bi bi-download" style={{ marginRight: '8px' }}></i>
-                    {droppedFile.replace(/\.[^/.]+$/, ".csv")}
+const TableComponent = ({ data, droppedFile }) => {
+    const csvName = droppedFile ? droppedFile.replace(/\.[^/.]+$/, ".csv") : "table-content.csv";
+    return (
+        <div className="component component-full">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body2" color="textSecondary">
+                    {data.tableData.length > 0 ? `Rows: ${data.tableData.length}` : ""}
                 </Typography>
-            ) : null}
-        </div>
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        {data.tableHeader.map((value, index) => (
-                            <TableCell key={index}>{value}</TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {data.tableData.map((row, index) => (
-                        <TableRow key={index}>
-                            {row?.map((value, index) => (
-                                <TableCell key={index}>{JSON.stringify(value)}</TableCell>
+                {droppedFile && data.tableData.length ? (
+                    <Typography variant="body2" color="primary" component="a" href="#"
+                        onClick={() => downloadTextFile(csvName, getCSVContent(data))}
+                        style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+                    >
+                        <i className="bi bi-download" style={{ marginRight: '8px' }}></i>
+                        {csvName}
+                    </Typography>
+                ) : null}
+            </div>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            {data.tableHeader.map((value, index) => (
+                                <TableCell key={index}>{value}</TableCell>
                             ))}
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    </div>
-);
+                    </TableHead>
+                    <TableBody>
+                        {data.tableData.map((row, index) => (
+                            <TableRow key={index}>
+                                {row?.map((value, index) => (
+                                    <TableCell key={index}>{JSON.stringify(value)}</TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
+    )
+};
 
 const App = () => {
     const [droppedFile, setDroppedFile] = useState(null);
@@ -159,9 +162,7 @@ const App = () => {
 
     const fileInputRef = React.useRef(null);
 
-    const handleDrop = async (event) => {
-        event.preventDefault();
-        const file = event.dataTransfer.files[0];
+    const handleFileSelection = async (file) => {
         if (file) {
             setDroppedFile(file.name);
             try {
@@ -170,26 +171,24 @@ const App = () => {
                 setData(t_data);
             } catch (error) {
                 setError(error.message);
+                setData(defaultResult());
             }
         }
+    };
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        handleFileSelection(file);
     };
 
     const handleDragOver = (event) => {
         event.preventDefault();
     };
 
-    const handleFileInputChange = async (event) => {
+    const handleFileInputChange = (event) => {
         const file = event.target.files[0];
-        if (file) {
-            setDroppedFile(file.name);
-            try {
-                const inputData = await loadJsonContent(file);
-                const t_data = transformData(inputData);
-                setData(t_data);
-            } catch (error) {
-                setError(error.message);
-            }
-        }
+        handleFileSelection(file);
     };
 
     const handleFileDropClick = () => {
