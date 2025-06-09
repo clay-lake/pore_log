@@ -92,9 +92,17 @@ const FileDropComponent = ({ droppedFile, fileInputRef, handleDrop, handleDragOv
             cursor: 'pointer',
         }}
     >
-        <i className="bi bi-cloud-upload icon"></i>
         <Typography variant="body1">
-            {droppedFile ? `Dropped File: ${droppedFile}` : 'Drag and drop a file here or click to select'}
+            {droppedFile ?
+
+                (<>
+                    <div><i className="bi bi-file-earmark-binary icon"></i></div>
+                    <div>Dropped File: {droppedFile}</div>
+
+                </>) : (<>
+                    <div><i className="bi bi-cloud-upload icon"></i></div>
+                    <div>Drag and drop a file here or click to select</div>
+                </>)}
         </Typography>
         <input
             type="file"
