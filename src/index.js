@@ -1,12 +1,18 @@
+import { Alert, AppBar, Container, CssBaseline, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider, Toolbar, Typography } from '@mui/material';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { CssBaseline, AppBar, Toolbar, Typography, Container } from '@mui/material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { Snackbar, Alert } from '@mui/material';
 import { JSONTree } from 'react-json-tree';
+import { defaultResult, getCSVContent, loadJsonContent, transformData } from './loader';
 import './styles.css';
-import { loadJsonContent, transformData, defaultResult, getCSVContent } from './loader';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+
+import { createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+    typography: {
+        fontSize: 18,
+    },
+});
 
 const transformToMetaTheme = userTheme => {
     return {
@@ -204,40 +210,42 @@ const App = () => {
     return (
         <>
             <CssBaseline />
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography
-                        variant="h6"
-                        style={{ fontFamily: 'monospace', fontWeight: 'bold', textTransform: 'uppercase', fontStyle: 'italic', fontSize: '2rem' }}
-                    >
-                        LAKE ENK
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <Container>
-                <div className="container">
-                    <MetaComponent data={data} metaTheme={metaTheme} droppedFile={droppedFile} />
-                    <FileDropComponent
-                        droppedFile={droppedFile}
-                        fileInputRef={fileInputRef}
-                        handleDrop={handleDrop}
-                        handleDragOver={handleDragOver}
-                        handleFileDropClick={handleFileDropClick}
-                        handleFileInputChange={handleFileInputChange}
-                    />
-                    <TableComponent data={data} droppedFile={droppedFile} />
-                </div>
-            </Container>
-            <Snackbar
-                open={!!error}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-                    {error}
-                </Alert>
-            </Snackbar>
+            <ThemeProvider theme={theme}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography
+                            variant="h6"
+                            style={{ fontFamily: 'monospace', fontWeight: 'bold', textTransform: 'uppercase', fontStyle: 'italic', fontSize: '2rem' }}
+                        >
+                            LAKE ENK
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <Container maxWidth={"xl"}>
+                    <div className="container">
+                        <MetaComponent data={data} metaTheme={metaTheme} droppedFile={droppedFile} />
+                        <FileDropComponent
+                            droppedFile={droppedFile}
+                            fileInputRef={fileInputRef}
+                            handleDrop={handleDrop}
+                            handleDragOver={handleDragOver}
+                            handleFileDropClick={handleFileDropClick}
+                            handleFileInputChange={handleFileInputChange}
+                        />
+                        <TableComponent data={data} droppedFile={droppedFile} />
+                    </div>
+                </Container >
+                <Snackbar
+                    open={!!error}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                        {error}
+                    </Alert>
+                </Snackbar>
+            </ThemeProvider>
         </>
     );
 };
